@@ -1,0 +1,69 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.18.0
+    hooks:
+      - id: gitlint
+        args:
+          - --ignore
+          - B6
+          - --msg-filename
+        stages: [ commit-msg ]
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.18.2
+    hooks:
+      - id: typos
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo-fmt
+        entry: cargo fmt -- --check
+        language: system
+        types: [ rust ]
+      - id: cargo-clippy
+        name: cargo-clippy
+        language: system
+        entry: >
+          cargo clippy --bins --tests --examples --all --
+          -D future-incompatible -D let-underscore -D nonstandard-style
+          -D rust-2018-compatibility -D rust-2018-idioms
+          -D rust-2021-compatibility -D unused -D warnings
+        pass_filenames: false
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff-format
+        entry: ruff format --check python_binding
+        language: python
+        additional_dependencies:
+          - 'ruff>=0.3.0'
+        types:
+          - python
+      - id: ruff
+        name: ruff
+        entry: ruff check --fix --exit-non-zero-on-fix python_binding
+        language: python
+        additional_dependencies:
+          - 'ruff>=0.3.0'
+        types:
+          - python
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.9.0
+    hooks:
+      - id: mypy
+        args:
+          - --strict
+        additional_dependencies:
+          - 'hypothesis[lark]>=6.88.3'
+          - 'pytest>=7.4.3'
+          - 'setuptools-rust>=1.8.1'
+          - 'types-setuptools'

@@ -1,0 +1,17 @@
+### Rust
+# Cargo
+debug/
+target/
+Cargo.lock
+
+# rustfmt
+**/*.rs.bk
+
+# profiler
+*.profraw
+
+### JetBrains
+.idea/
+
+### MacOS
+.DS_Store

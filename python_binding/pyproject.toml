@@ -1,0 +1,72 @@
+[project]
+name = "az-lang"
+description = "AZ language."
+authors = [{ name = "Azat Ibrakov", email = "azatibrakov@gmail.com" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+requires-python = ">=3.11"
+dependencies = []
+dynamic = ["version"]
+
+[project.optional-dependencies]
+tests = [
+    "hypothesis[lark]>=6.88.3",
+    "pytest>=7.4.3"
+]
+
+[build-system]
+requires = [
+    "setuptools-rust>=1.8.1",
+    "setuptools",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.coverage.run]
+source = ["az"]
+
+[tool.pytest.ini_options]
+addopts = "--verbose -s --hypothesis-profile=default"
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "single"
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+preview = true
+select = [
+    # flake8-bugbear
+    "B",
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # isort
+    "I",
+    # flake8-simplify
+    "SIM",
+    # pyupgrade
+    "UP",
+]
+ignore = [
+    "E203", # Whitespace before ':'
+]
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+known-local-folder = ["tests"]
+relative-imports-order = "closest-to-furthest"
+split-on-trailing-comma = false
+
+[tool.setuptools.dynamic]
+version = { attr = "az.__version__" }
