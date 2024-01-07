@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  az:
+    build:
+      context: .
+      args:
+        - IMAGE_NAME=${IMAGE_NAME}
+        - IMAGE_VERSION=${IMAGE_VERSION}
+    image: az-lang/az:0.0.0
+    volumes:
+      - ./Cargo.toml:/opt/az/Cargo.toml
+      - ./README.md:/opt/az/README.md
+      - ./rust-toolchain.toml:/opt/az/rust-toolchain.toml
+      - ./src:/opt/az/src
+    entrypoint: cargo test --all-features
