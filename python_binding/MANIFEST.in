@@ -1,0 +1,4 @@
+include Cargo.toml
+include LICENSE
+include az/py.typed
+recursive-include src *.rs
