@@ -1,0 +1,1 @@
+export const MAX_EXPRESSIONS_ARRAY_LENGTH = 5

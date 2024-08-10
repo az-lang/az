@@ -1,0 +1,107 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+        args:
+          - --ignore
+          - B6
+          - --msg-filename
+        stages: [ commit-msg ]
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.24.1
+    hooks:
+      - id: typos
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.1
+    hooks:
+      - id: actionlint
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo-fmt
+        entry: cargo fmt -- --check
+        language: system
+        types: [ rust ]
+      - id: cargo-clippy-all-features
+        name: cargo-clippy-all-features
+        language: system
+        entry: >
+          bash -c "cargo metadata --format-version=1 --no-deps
+          | jq --raw-output '.packages[].name'
+          | xargs -I{} cargo clippy --all-targets --all-features --package {} \
+            -- -D future-incompatible -D let-underscore -D nonstandard-style \
+               -D rust-2018-compatibility -D rust-2018-idioms \
+               -D rust-2021-compatibility -D unused -D warnings"
+        pass_filenames: false
+        types: [ rust ]
+      - id: cargo-clippy-no-default-features
+        name: cargo-clippy-no-default-features
+        language: system
+        entry: >
+          bash -c "cargo metadata --format-version=1 --no-deps
+          | jq --raw-output '.packages[].name'
+          | xargs -I{} cargo clippy --all-targets --no-default-features --package {} \
+            -- -D future-incompatible -D let-underscore -D nonstandard-style \
+               -D rust-2018-compatibility -D rust-2018-idioms \
+               -D rust-2021-compatibility -D unused -D warnings"
+        pass_filenames: false
+        types: [ rust ]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.2
+    hooks:
+      - id: ruff-format
+        args:
+          - --config=python_binding/pyproject.toml
+      - id: ruff
+        args:
+          - --config=python_binding/pyproject.toml
+          - --fix
+          - --exit-non-zero-on-fix
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.1
+    hooks:
+      - id: mypy
+        args:
+          - --strict
+        additional_dependencies:
+          - 'hypothesis[lark]>=6.88.3'
+          - 'pytest>=7.4.3'
+          - 'setuptools-rust>=1.8.1'
+          - 'types-setuptools'
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: >
+          bash -c '
+          cd wasm_binding
+          && npm install
+          && ./node_modules/.bin/eslint --fix --max-warnings=0 tests
+          '
+        language: system
+        pass_filenames: false
+        files: .[jt]s$
+  - repo: local
+    hooks:
+      - id: tsc
+        name: tsc
+        entry: >
+          bash -c '
+          cd wasm_binding
+          && npm install
+          && ./node_modules/.bin/tsc --noEmit
+          '
+        language: system
+        pass_filenames: false
+        files: .[jt]s$
