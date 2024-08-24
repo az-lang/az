@@ -1,0 +1,7 @@
+### Node template
+# istanbul
+coverage/
+
+# npm
+node_modules/
+package-lock.json
